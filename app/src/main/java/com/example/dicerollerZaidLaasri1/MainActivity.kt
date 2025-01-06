@@ -2,11 +2,13 @@ package com.example.dicerollerZaidLaasri1
 
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.addTextChangedListener
 
 
 /**
@@ -19,22 +21,30 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         val rollButton: Button = findViewById(R.id.button)
-        rollButton.setOnClickListener {
-            rollDice()
+        val targetInput: EditText = findViewById(R.id.targetInput)
+        val resultTextView: TextView = findViewById(R.id.resultTextView)
+
+        // Activer le bouton lorsque le champ de texte est rempli
+        targetInput.addTextChangedListener {
+            rollButton.isEnabled = it.toString().isNotEmpty()
         }
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        rollButton.setOnClickListener {
+            val targetNumber = targetInput.text.toString().toIntOrNull()
+            if (targetNumber != null) {
+                rollDice(targetNumber)
+            } else {
+                resultTextView.text = "Veuillez entrer un nombre valide !"
+            }
         }
     }
 
-    private fun rollDice() {
+    private fun rollDice(targetNumber: Int) {
         val dice1 = Dice(6)
         val dice2 = Dice(6)
 
         val diceRoll1 = dice1.roll()
         val diceRoll2 = dice2.roll()
+        val sum = diceRoll1 + diceRoll2
 
         val dice1TextView: TextView = findViewById(R.id.textView)
         val dice2TextView: TextView = findViewById(R.id.dice2TextView)
@@ -43,17 +53,15 @@ class MainActivity : AppCompatActivity() {
         dice1TextView.text = diceRoll1.toString()
         dice2TextView.text = diceRoll2.toString()
 
-        if (diceRoll1 == diceRoll2) {
-            resultTextView.text = "Félicitations ! Vous avez gagné"
+        if (sum == targetNumber) {
+            resultTextView.text = "Félicitations ! Vous avez gagné  (Somme : $sum)"
         } else {
-            resultTextView.text = "Dommage, essayez encore !"
+            resultTextView.text = "Dommage ! Somme des dés : $sum"
         }
-
     }
 }
 
 class Dice(private val numSides: Int) {
-
     fun roll(): Int {
         return (1..numSides).random()
     }
