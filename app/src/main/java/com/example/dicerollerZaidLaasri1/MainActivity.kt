@@ -30,10 +30,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun rollDice() {
-        val dice = Dice(6)
-        val diceRoll = dice.roll()
-        val resultTextView: TextView = findViewById(R.id.textView)
-        resultTextView.text = diceRoll.toString()
+        val dice1 = Dice(6)
+        val dice2 = Dice(6)
+
+        val diceRoll1 = dice1.roll()
+        val diceRoll2 = dice2.roll()
+
+        val dice1TextView: TextView = findViewById(R.id.textView)
+        val dice2TextView: TextView = findViewById(R.id.dice2TextView)
+        val resultTextView: TextView = findViewById(R.id.resultTextView)
+
+        dice1TextView.text = diceRoll1.toString()
+        dice2TextView.text = diceRoll2.toString()
+
+        if (diceRoll1 == diceRoll2) {
+            resultTextView.text = "Félicitations ! Vous avez gagné"
+        } else {
+            resultTextView.text = "Dommage, essayez encore !"
+        }
 
     }
 }
